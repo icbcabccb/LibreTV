@@ -1,0 +1,22 @@
+
+@media (max-width: 640px) {
+  .settings-panel,
+  .history-panel {
+    width: 100vw !important;
+    padding: 1rem !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal {
+    width: 95vw !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  button, input {
+    min-height: 48px;
+    font-size: 1rem;
+  }
+  h1.gradient-text {
+    font-size: 2rem !important;
+  }
+}
