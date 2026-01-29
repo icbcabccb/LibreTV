@@ -17,7 +17,7 @@
     <style>
         /* --- 全局浅色主题定义 --- */
         body {
-            background-color: #fcfcfc; /* 极浅的灰白色背景 */
+            background-color: #fcfcfc;
             color: #333333;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
@@ -40,16 +40,16 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* --- 侧边栏样式重构 --- */
+        /* --- 侧边栏样式 --- */
         .history-panel, .settings-panel {
-            background-color: rgba(255, 255, 255, 0.98) !important; /*由于使用了backdrop-blur，增加透明度*/
+            background-color: rgba(255, 255, 255, 0.98) !important;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: none !important;
             box-shadow: 0 0 40px rgba(0,0,0,0.1) !important;
         }
 
-        /* 菜单按钮优化：默认透明，悬停显色 */
+        /* 菜单按钮优化 */
         .menu-trigger-btn {
             background-color: transparent;
             color: #666;
@@ -61,7 +61,7 @@
             transform: scale(1.05);
         }
 
-        /* 开关样式覆盖 (适配浅色) */
+        /* 开关样式覆盖 */
         .toggle-bg { background-color: #e5e7eb !important; }
         input:checked + .toggle-bg { background-color: #4facfe !important; }
 
@@ -82,7 +82,6 @@
         @media (max-width: 640px) {
             .history-panel, .settings-panel { width: 100vw !important; }
             h1.main-title { font-size: 2.2rem !important; }
-            /* 移动端导航栏滚动 */
             .nav-scroll-container {
                 mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
             }
@@ -260,17 +259,8 @@
                 </button>
             </div>
 
-            <div class="w-full mt-6 px-4">
-                <div class="flex justify-between items-end mb-3">
-                    <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider">最近搜索</h2>
-                    <button onclick="clearSearchHistory()" class="text-xs text-gray-400 hover:text-red-400 transition-colors flex items-center gap-1">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        清空
-                    </button>
-                </div>
-                <div id="recentSearches" class="flex flex-wrap gap-2">
-                    </div>
-            </div>
+            <div id="recentSearches" class="hidden"></div>
+            
         </div>
 
         <div id="doubanArea" class="w-full mt-10 mb-20 hidden">
@@ -378,7 +368,7 @@
 
     <style>
         /* 强制修正 JS 生成的标签颜色 */
-        #recentSearches div, #douban-tags div {
+        #douban-tags div {
             background-color: #f3f4f6 !important;
             color: #666 !important;
             border: 1px solid #e5e7eb;
@@ -386,7 +376,7 @@
             border-radius: 9999px;
             font-size: 0.875rem;
         }
-        #recentSearches div:hover, #douban-tags div:hover {
+        #douban-tags div:hover {
             background-color: #e5e7eb !important;
             color: #333 !important;
         }
