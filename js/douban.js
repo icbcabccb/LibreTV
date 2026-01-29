@@ -107,7 +107,7 @@ function initDouban() {
     setupDoubanRefreshBtn();
     
     // 初始加载热门内容
-    if (localStorage.getItem('doubanEnabled') === 'true') {
+    if (localStorage.getItem('doubanEnabled') === 'false') {
         renderRecommend(doubanCurrentTag, doubanPageSize, doubanPageStart);
     }
 }
@@ -117,7 +117,7 @@ function updateDoubanVisibility() {
     const doubanArea = document.getElementById('doubanArea');
     if (!doubanArea) return;
     
-    const isEnabled = localStorage.getItem('doubanEnabled') === 'true';
+    const isEnabled = localStorage.getItem('doubanEnabled') === 'false';
     const isSearching = document.getElementById('resultsArea') && 
         !document.getElementById('resultsArea').classList.contains('hidden');
     
@@ -282,7 +282,7 @@ function renderDoubanMovieTvSwitch() {
             setupDoubanRefreshBtn();
             
             // 初始加载热门内容
-            if (localStorage.getItem('doubanEnabled') === 'true') {
+            if (localStorage.getItem('doubanEnabled') === 'false') {
                 renderRecommend(doubanCurrentTag, doubanPageSize, doubanPageStart);
             }
         }
@@ -308,7 +308,7 @@ function renderDoubanMovieTvSwitch() {
             setupDoubanRefreshBtn();
             
             // 初始加载热门内容
-            if (localStorage.getItem('doubanEnabled') === 'true') {
+            if (localStorage.getItem('doubanEnabled') === 'false') {
                 renderRecommend(doubanCurrentTag, doubanPageSize, doubanPageStart);
             }
         }
