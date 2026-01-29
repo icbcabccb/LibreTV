@@ -484,21 +484,9 @@ function toggleSettings(e) {
     const settingsPanel = document.getElementById('settingsPanel');
     if (!settingsPanel) return;
 
-    // 检查是否有管理员密码
-    const hasAdminPassword = window.__ENV__?.ADMINPASSWORD && 
-                           window.__ENV__.ADMINPASSWORD.length === 64 && 
-                           !/^0+$/.test(window.__ENV__.ADMINPASSWORD);
-
     if (settingsPanel.classList.contains('show')) {
         settingsPanel.classList.remove('show');
     } else {
-        // 只有设置了管理员密码且未验证时才拦截
-        if (hasAdminPassword && !isAdminVerified()) {
-            e.preventDefault();
-            e.stopPropagation();
-            showAdminPasswordModal();
-            return;
-        }
         settingsPanel.classList.add('show');
     }
 
@@ -596,11 +584,11 @@ function resetSearchArea() {
     try {
         window.history.pushState(
             {},
-            `司南搜索 - 免费打开全网影视资源,
+            `LibreTV - 免费在线视频搜索与观看平台`,
             `/`
         );
         // 更新页面标题
-        document.title = `司南搜索 - 免费打开全网影视资源;
+        document.title = `LibreTV - 免费在线视频搜索与观看平台`;
     } catch (e) {
         console.error('更新浏览器历史失败:', e);
     }
@@ -617,12 +605,22 @@ function getCustomApiInfo(customApiIndex) {
 
 // 搜索功能 - 修改为支持多选API和多页结果
 async function search() {
-    // 密码保护校验
-    if (window.isPasswordProtected && window.isPasswordVerified) {
-        if (window.isPasswordProtected() && !window.isPasswordVerified()) {
-            showPasswordModal && showPasswordModal();
-            return;
+    // 强化的密码保护校验 - 防止绕过
+    try {
+        if (window.ensurePasswordProtection) {
+            window.ensurePasswordProtection();
+        } else {
+            // 兼容性检查
+            if (window.isPasswordProtected && window.isPasswordVerified) {
+                if (window.isPasswordProtected() && !window.isPasswordVerified()) {
+                    showPasswordModal && showPasswordModal();
+                    return;
+                }
+            }
         }
+    } catch (error) {
+        console.warn('Password protection check failed:', error.message);
+        return;
     }
     const query = document.getElementById('searchInput').value.trim();
 
