@@ -57,10 +57,6 @@ const API_SITES = {
         api: 'https://360zy.com/api.php/provide/vod',
         name: '360资源',
     },
-    iqiyi: {
-        api: 'https://www.iqiyizyapi.com/api.php/provide/vod',
-        name: 'iqiyi资源',
-    },
     wolong: {
         api: 'https://wolongzyw.com/api.php/provide/vod',
         name: '卧龙资源',
@@ -113,6 +109,26 @@ const API_SITES = {
     lzi: {
         api: 'https://cj.lziapi.com/api.php/provide/vod/',
         name: '量子资源站'
+    },
+    aiqiyi: {
+        api: 'https://iqiyizyapi.com/api.php/provide/vod/',
+        name: '爱奇艺'
+    },
+    guanshu: {
+        api: 'https://api.guangsuapi.com/api.php/provide/vod/',
+        name: '光速资源'
+    },
+    huya: {
+        api: 'https://www.huyaapi.com/api.php/provide/vod/at/json/',
+        name: '虎牙资源'
+    },
+    maotai: {
+        api: 'https://caiji.maotaizy.cc/api.php/provide/vod/',
+        name: '茅台资源'
+    },
+    shubo: {
+        api: 'https://subocaiji.com/api.php/provide/vod/',
+        name: '速播资源'
     },
     testSource: {
         api: 'https://www.example.com/api.php/provide/vod',
