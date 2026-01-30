@@ -22,46 +22,46 @@ const SITE_CONFIG = {
 
 // API站点配置
 const API_SITES = {
-        dytt: {
+        电影天堂: {
         api: 'http://caiji.dyttzyapi.com/api.php/provide/vod',
         name: '电影天堂资源',
         detail: 'http://caiji.dyttzyapi.com', 
     },
-    ruyi: {
+    如意: {
         api: 'https://cj.rycjapi.com/api.php/provide/vod',
         name: '如意资源',
     },
-    bfzy: {
+    暴风: {
         api: 'https://bfzyapi.com/api.php/provide/vod',
         name: '暴风资源',
     },
-    tyyszy: {
+    天涯: {
         api: 'https://tyyszy.com/api.php/provide/vod',
         name: '天涯资源',
     },
-    xiaomaomi: {
+    小猫咪: {
         api: 'https://zy.xmm.hk/api.php/provide/vod',
         name: '小猫咪资源',
     },
-    ffzy: {
+    非凡: {
         api: 'http://ffzy5.tv/api.php/provide/vod',
         name: '非凡影视',
         detail: 'http://ffzy5.tv', 
     },
-    heimuer: {
+    黑木耳: {
         api: 'https://json.heimuer.xyz/api.php/provide/vod',
         name: '黑木耳',
         detail: 'https://heimuer.tv', 
     },
-    zy360: {
+    360: {
         api: 'https://360zy.com/api.php/provide/vod',
         name: '360资源',
     },
-    wolong: {
+    卧龙: {
         api: 'https://wolongzyw.com/api.php/provide/vod',
         name: '卧龙资源',
     }, 
-    hwba: {
+    华为吧: {
         api: 'https://cjhwba.com/api.php/provide/vod',
         name: '华为吧资源',
     },
@@ -70,35 +70,35 @@ const API_SITES = {
         name: '极速资源',
         detail: 'https://jszyapi.com', 
     },
-    dbzy: {
+    豆瓣: {
         api: 'https://dbzy.tv/api.php/provide/vod',
         name: '豆瓣资源',
     },
-    mozhua: {
+    魔爪: {
         api: 'https://mozhuazy.com/api.php/provide/vod',
         name: '魔爪资源',
     },
-    mdzy: {
+    魔都: {
         api: 'https://www.mdzyapi.com/api.php/provide/vod',
         name: '魔都资源',
     },
-    zuid: {
+    最大: {
         api: 'https://api.zuidapi.com/api.php/provide/vod',
         name: '最大资源'
     },
-    yinghua: {
+    樱花: {
         api: 'https://m3u8.apiyhzy.com/api.php/provide/vod',
         name: '樱花资源'
     },
-    baidu: {
+    百度云: {
         api: 'https://api.apibdzy.com/api.php/provide/vod',
         name: '百度云资源'
     },
-    wujin: {
+    无尽: {
         api: 'https://api.wujinapi.me/api.php/provide/vod',
         name: '无尽资源'
     },
-    wwzy: {
+    旺旺短剧: {
         api: 'https://wwzy.tv/api.php/provide/vod',
         name: '旺旺短剧'
     },
@@ -106,7 +106,7 @@ const API_SITES = {
         api: 'https://ikunzyapi.com/api.php/provide/vod',
         name: 'iKun资源'
     },
-    lzi: {
+    量子: {
         api: 'https://cj.lziapi.com/api.php/provide/vod/',
         name: '量子资源站'
     },
@@ -114,22 +114,65 @@ const API_SITES = {
         api: 'https://iqiyizyapi.com/api.php/provide/vod/',
         name: '爱奇艺'
     },
-    guanshu: {
+    光速: {
         api: 'https://api.guangsuapi.com/api.php/provide/vod/',
         name: '光速资源'
     },
-    huya: {
+    虎牙: {
         api: 'https://www.huyaapi.com/api.php/provide/vod/at/json/',
         name: '虎牙资源'
     },
-    maotai: {
+    茅台: {
         api: 'https://caiji.maotaizy.cc/api.php/provide/vod/',
         name: '茅台资源'
     },
-    shubo: {
+    速播: {
         api: 'https://subocaiji.com/api.php/provide/vod/',
         name: '速播资源'
     },
+    山海: {
+      "api": "https://zy.sh0o.cn/api.php/provide/vod",
+      "name": "山海资源"
+    },
+    飘零: {
+      "api": "https://p2100.net/api.php/provide/vod",
+      "name": "飘零资源"
+    },
+    U酷: {
+      "api": "https://api.ukuapi88.com/api.php/provide/vod",
+      "name": "U酷影视"
+    },
+   闪电: {
+      "api": "https://xsd.sdzyapi.com/api.php/provide/vod",
+      "name": "闪电资源"    
+    },
+   金鹰: {
+      "api": "hhttps://jyzyapi.com/provide/vod/from/jinyingyun/at/json",
+      "name": "金鹰资源"
+      },
+   豪华: {
+      "api": "https://hhzyapi.com/api.php/provide/vod",
+      "name": "豪华资源"
+      },
+   索尼: {
+      "api": "https://suoniapi.com/api.php/provide/vod",
+      "name": "索尼资源"
+      },
+   红牛: {
+      "api": "https://www.hongniuzy2.com/api.php/provide/vod",
+      "name": "红牛资源"
+      },
+   猫眼: {
+      "api": "https://api.maoyanapi.top/api.php/provide/vod",
+      "name": "猫眼资源"
+      },
+   快车: {
+      "api": "https://caiji.kuaichezy.org/api.php/provide/vod",
+      "name": "快车资源"
+        },
+   优质: {
+      "api": "https://api.yzzy-api.com/inc/apijson.php",
+      "name": "优质资源"
     testSource: {
         api: 'https://www.example.com/api.php/provide/vod',
         name: '空内容测试源',
