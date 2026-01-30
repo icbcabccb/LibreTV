@@ -584,11 +584,11 @@ function resetSearchArea() {
     try {
         window.history.pushState(
             {},
-            `司南搜索 - 搜一搜，免费获取全网影视资源。`,
+            `红月搜索 - 搜一搜，免费获取全网影视资源。`,
             `/`
         );
         // 更新页面标题
-        document.title = `司南搜索 - 搜一搜，免费获取全网影视资源`;
+        document.title = `红月搜索 - 搜一搜，免费获取全网影视资源`;
     } catch (e) {
         console.error('更新浏览器历史失败:', e);
     }
