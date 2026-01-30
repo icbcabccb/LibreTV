@@ -13,7 +13,7 @@ const PASSWORD_CONFIG = {
 
 // 网站信息配置
 const SITE_CONFIG = {
-    name: '司南搜索',
+    name: '红月搜索',
     url: 'https://200805.xyz',
     description: '免费在线影视搜索与观看平台',
     logo: 'image/logo.png',
