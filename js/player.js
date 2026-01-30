@@ -218,7 +218,7 @@ function initializePageContent() {
     }
 
     // 设置页面标题
-    document.title = currentVideoTitle + ' - 司南搜索播放器';
+    document.title = currentVideoTitle + ' - 红月搜索播放器';
     document.getElementById('videoTitle').textContent = currentVideoTitle;
 
     // 初始化播放器
