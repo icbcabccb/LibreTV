@@ -1,0 +1,8 @@
+name = "mytv"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "."
+
+[[d1_databases]]
+binding = "DB"
+database_name = "mytv-db"
+database_id = "941b671b-f2b6-472a-91ae-337595935eea"
