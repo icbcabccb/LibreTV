@@ -574,36 +574,63 @@ async function handleMultipleCustomSearch(searchQuery, customApiUrls) {
 }
 
 // 拦截API请求
+(function() {// ==========================================
+// 核心拦截器逻辑 (请完整替换文件底部原有的拦截器代码)
+// ==========================================
 (function() {
     const originalFetch = window.fetch;
     
     window.fetch = async function(input, init) {
-        const requestUrl = typeof input === 'string' ? new URL(input, window.location.origin) : input.url;
-
-        // 【新增：D1同步请求直接放行，不走本地代理】
-        if (requestUrl.pathname.startsWith('/api/history')) {
-            return originalFetch.apply(this, arguments);
-        }
+        let requestUrl;
+        
+        // 1. 规范化 URL 对象，防止报错
+        try {
+            if (typeof input === 'string') {
+                // 处理相对路径
+                requestUrl = new URL(input, window.location.origin);
+            } else if (input instanceof URL) {
+                requestUrl = input;
+            } else if (input && input.url) {
+                requestUrl = new URL(input.url, window.location.origin);
+            } else {
+                // 如果无法解析，直接放行
+                return originalFetch.apply(this, arguments);
+            }
         } catch (e) {
+            // 解析失败直接放行
             return originalFetch.apply(this, arguments);
         }
         
-        // 【新增】如果是历史记录同步请求，直接放行，不走本地拦截
+        // -----------------------------------------------------------
+        // 2. 【关键】如果是 Cloudflare D1 历史记录接口，直接放行到网络！
+        //    必须放在下面的通用 /api/ 拦截之前
+        // -----------------------------------------------------------
         if (requestUrl.pathname.startsWith('/api/history')) {
             return originalFetch.apply(this, arguments);
         }
-        // 检查是否是API请求
+
+        // -----------------------------------------------------------
+        // 3. 拦截其他所有 /api/ 开头的请求 (搜索、详情等)
+        //    这些请求必须由本地 JS 函数 handleApiRequest 处理，不能发给服务器
+        // -----------------------------------------------------------
         if (requestUrl.pathname.startsWith('/api/')) {
-            // ... (后面代码保持不变)
-        
-        if (requestUrl.pathname.startsWith('/api/')) {
+            // 密码保护检查逻辑
             if (window.isPasswordProtected && window.isPasswordVerified) {
                 if (window.isPasswordProtected() && !window.isPasswordVerified()) {
-                    return;
+                    // 如果未验证密码，静默失败或返回错误
+                    return new Response(JSON.stringify({ code: 403, msg: 'Password Required' }), { 
+                        status: 403,
+                        headers: { 'Content-Type': 'application/json' }
+                    });
                 }
             }
+
             try {
+                // !!! 核心：调用本地处理函数获取数据 !!!
+                // handleApiRequest 定义在 api.js 的上半部分，请确保没被删掉
                 const data = await handleApiRequest(requestUrl);
+                
+                // 构造伪造的 Response 返回给前端
                 return new Response(data, {
                     headers: {
                         'Content-Type': 'application/json',
@@ -611,42 +638,18 @@ async function handleMultipleCustomSearch(searchQuery, customApiUrls) {
                     },
                 });
             } catch (error) {
+                console.error('API Proxy Error:', error);
                 return new Response(JSON.stringify({
                     code: 500,
-                    msg: '服务器内部错误',
+                    msg: '内部处理错误: ' + error.message,
                 }), {
                     status: 500,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                 });
             }
         }
         
-        // 非API请求使用原始fetch
+        // 4. 其他普通请求 (图片、CSS、JS文件等) 原样放行
         return originalFetch.apply(this, arguments);
     };
 })();
-
-async function testSiteAvailability(apiUrl) {
-    try {
-        // 使用更简单的测试查询
-        const response = await fetch('/api/search?wd=test&customApi=' + encodeURIComponent(apiUrl), {
-            // 添加超时
-            signal: AbortSignal.timeout(5000)
-        });
-        
-        // 检查响应状态
-        if (!response.ok) {
-            return false;
-        }
-        
-        const data = await response.json();
-        
-        // 检查API响应的有效性
-        return data && data.code !== 400 && Array.isArray(data.list);
-    } catch (error) {
-        console.error('站点可用性测试失败:', error);
-        return false;
-    }
-}
