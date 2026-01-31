@@ -584,7 +584,14 @@ async function handleMultipleCustomSearch(searchQuery, customApiUrls) {
         if (requestUrl.pathname.startsWith('/api/history')) {
             return originalFetch.apply(this, arguments);
         }
-
+        } catch (e) {
+            return originalFetch.apply(this, arguments);
+        }
+        
+        // 【新增】如果是历史记录同步请求，直接放行，不走本地拦截
+        if (requestUrl.pathname.startsWith('/api/history')) {
+            return originalFetch.apply(this, arguments);
+        }
         // 检查是否是API请求
         if (requestUrl.pathname.startsWith('/api/')) {
             // ... (后面代码保持不变)
