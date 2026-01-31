@@ -69,6 +69,22 @@
                 </svg>
             </button>
         </div>
+        <div class="bg-gray-50/80 rounded-xl p-4 border border-gray-100 mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <label class="text-sm font-bold text-gray-700">跨设备同步 (D1)</label>
+                    <span class="text-xs text-gray-400">输入相同密钥</span>
+                </div>
+                <div class="flex gap-2 mb-2">
+                    <input type="text" id="userSyncKey" placeholder="例如: my-pwd-123" 
+                           class="flex-1 bg-white border border-gray-200 text-gray-600 px-3 py-1.5 rounded-lg text-sm focus:outline-none focus:border-blue-400 transition-all">
+                    <button onclick="setSyncKey()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm transition-colors shadow-sm">
+                        保存
+                    </button>
+                </div>
+                <button onclick="syncCloudHistory()" class="w-full bg-white hover:bg-gray-50 text-blue-500 border border-blue-100 py-1.5 rounded-lg text-xs font-medium transition-colors">
+                    立即手动同步
+                </button>
+            </div>
         <div class="space-y-5">
             <!-- 数据源设置区域 -->
             <div class="p-3 bg-[#151515] rounded-lg shadow-inner">
