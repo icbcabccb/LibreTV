@@ -579,6 +579,15 @@ async function handleMultipleCustomSearch(searchQuery, customApiUrls) {
     
     window.fetch = async function(input, init) {
         const requestUrl = typeof input === 'string' ? new URL(input, window.location.origin) : input.url;
+
+        // 【新增：D1同步请求直接放行，不走本地代理】
+        if (requestUrl.pathname.startsWith('/api/history')) {
+            return originalFetch.apply(this, arguments);
+        }
+
+        // 检查是否是API请求
+        if (requestUrl.pathname.startsWith('/api/')) {
+            // ... (后面代码保持不变)
         
         if (requestUrl.pathname.startsWith('/api/')) {
             if (window.isPasswordProtected && window.isPasswordVerified) {
