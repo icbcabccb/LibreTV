@@ -574,86 +574,63 @@ async function handleMultipleCustomSearch(searchQuery, customApiUrls) {
 }
 
 // 拦截API请求
-// ==========================================
-// 核心拦截器逻辑 (请复制这段代码覆盖原有的拦截器)
-// ==========================================
 (function() {
     const originalFetch = window.fetch;
     
     window.fetch = async function(input, init) {
-        let requestUrl;
+        const requestUrl = typeof input === 'string' ? new URL(input, window.location.origin) : input.url;
         
-        // 1. 安全地解析 URL
-        try {
-            if (typeof input === 'string') {
-                requestUrl = new URL(input, window.location.origin);
-            } else if (input instanceof Request) {
-                requestUrl = new URL(input.url, window.location.origin);
-            } else if (input instanceof URL) {
-                requestUrl = input;
-            } else {
-                // 如果参数格式奇怪，直接放行
-                return originalFetch.apply(this, arguments);
-            }
-        } catch (e) {
-            return originalFetch.apply(this, arguments);
-        }
-        
-        // =========================================================
-        // 【关键修复点 1】 Cloudflare D1 同步接口 -> 直接放行
-        // 必须优先判断，让它通过网络发送给后端 Functions
-        // =========================================================
-        if (requestUrl.pathname.includes('/api/history')) {
-            return originalFetch.apply(this, arguments);
-        }
-
-        // =========================================================
-        // 【关键修复点 2】 搜源、获取详情、解析接口 -> 必须拦截
-        // 这些请求必须由本地 JS 函数 handleApiRequest 处理
-        // =========================================================
         if (requestUrl.pathname.startsWith('/api/')) {
-            
-            // 2.1 密码验证检查 (如果有密码保护)
-            try {
-                if (window.isPasswordProtected && window.isPasswordVerified) {
-                    if (window.isPasswordProtected() && !window.isPasswordVerified()) {
-                        return new Response(JSON.stringify({ code: 403, msg: 'Password Required' }), { 
-                            status: 403,
-                            headers: { 'Content-Type': 'application/json' }
-                        });
-                    }
+            if (window.isPasswordProtected && window.isPasswordVerified) {
+                if (window.isPasswordProtected() && !window.isPasswordVerified()) {
+                    return;
                 }
-            } catch(e) { /* 忽略密码检查错误 */ }
-
-            // 2.2 调用本地处理函数 (搜源/详情的核心逻辑)
+            }
             try {
-                // 这里的 handleApiRequest 是定义在 api.js 上半部分的函数
-                // 绝对不能让这个请求走到网络上，因为后端没这个接口
                 const data = await handleApiRequest(requestUrl);
-                
-                // 伪造一个成功的 HTTP 响应返回给前端
                 return new Response(data, {
-                    status: 200,
-                    statusText: 'OK',
                     headers: {
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*',
                     },
                 });
             } catch (error) {
-                console.error('API Proxy Error:', error);
-                // 返回 JSON 格式的错误，防止前端解析炸裂
                 return new Response(JSON.stringify({
                     code: 500,
-                    msg: 'API处理失败: ' + error.message,
+                    msg: '服务器内部错误',
                 }), {
                     status: 500,
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                 });
             }
         }
         
-        // 3. 其他请求 (如图片、CSS、JS) -> 原样放行
+        // 非API请求使用原始fetch
         return originalFetch.apply(this, arguments);
     };
 })();
+
+async function testSiteAvailability(apiUrl) {
+    try {
+        // 使用更简单的测试查询
+        const response = await fetch('/api/search?wd=test&customApi=' + encodeURIComponent(apiUrl), {
+            // 添加超时
+            signal: AbortSignal.timeout(5000)
+        });
+        
+        // 检查响应状态
+        if (!response.ok) {
+            return false;
+        }
+        
+        const data = await response.json();
+        
+        // 检查API响应的有效性
+        return data && data.code !== 400 && Array.isArray(data.list);
+    } catch (error) {
+        console.error('站点可用性测试失败:', error);
+        return false;
+    }
+}
