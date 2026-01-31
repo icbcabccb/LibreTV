@@ -574,8 +574,8 @@ async function handleMultipleCustomSearch(searchQuery, customApiUrls) {
 }
 
 // 拦截API请求
-(function() {// ==========================================
-// 核心拦截器逻辑 (请完整替换文件底部原有的拦截器代码)
+// ==========================================
+// 核心拦截器逻辑 (请复制这段代码覆盖原有的拦截器)
 // ==========================================
 (function() {
     const originalFetch = window.fetch;
@@ -583,55 +583,58 @@ async function handleMultipleCustomSearch(searchQuery, customApiUrls) {
     window.fetch = async function(input, init) {
         let requestUrl;
         
-        // 1. 规范化 URL 对象，防止报错
+        // 1. 安全地解析 URL
         try {
             if (typeof input === 'string') {
-                // 处理相对路径
                 requestUrl = new URL(input, window.location.origin);
+            } else if (input instanceof Request) {
+                requestUrl = new URL(input.url, window.location.origin);
             } else if (input instanceof URL) {
                 requestUrl = input;
-            } else if (input && input.url) {
-                requestUrl = new URL(input.url, window.location.origin);
             } else {
-                // 如果无法解析，直接放行
+                // 如果参数格式奇怪，直接放行
                 return originalFetch.apply(this, arguments);
             }
         } catch (e) {
-            // 解析失败直接放行
             return originalFetch.apply(this, arguments);
         }
         
-        // -----------------------------------------------------------
-        // 2. 【关键】如果是 Cloudflare D1 历史记录接口，直接放行到网络！
-        //    必须放在下面的通用 /api/ 拦截之前
-        // -----------------------------------------------------------
-        if (requestUrl.pathname.startsWith('/api/history')) {
+        // =========================================================
+        // 【关键修复点 1】 Cloudflare D1 同步接口 -> 直接放行
+        // 必须优先判断，让它通过网络发送给后端 Functions
+        // =========================================================
+        if (requestUrl.pathname.includes('/api/history')) {
             return originalFetch.apply(this, arguments);
         }
 
-        // -----------------------------------------------------------
-        // 3. 拦截其他所有 /api/ 开头的请求 (搜索、详情等)
-        //    这些请求必须由本地 JS 函数 handleApiRequest 处理，不能发给服务器
-        // -----------------------------------------------------------
+        // =========================================================
+        // 【关键修复点 2】 搜源、获取详情、解析接口 -> 必须拦截
+        // 这些请求必须由本地 JS 函数 handleApiRequest 处理
+        // =========================================================
         if (requestUrl.pathname.startsWith('/api/')) {
-            // 密码保护检查逻辑
-            if (window.isPasswordProtected && window.isPasswordVerified) {
-                if (window.isPasswordProtected() && !window.isPasswordVerified()) {
-                    // 如果未验证密码，静默失败或返回错误
-                    return new Response(JSON.stringify({ code: 403, msg: 'Password Required' }), { 
-                        status: 403,
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                }
-            }
-
+            
+            // 2.1 密码验证检查 (如果有密码保护)
             try {
-                // !!! 核心：调用本地处理函数获取数据 !!!
-                // handleApiRequest 定义在 api.js 的上半部分，请确保没被删掉
+                if (window.isPasswordProtected && window.isPasswordVerified) {
+                    if (window.isPasswordProtected() && !window.isPasswordVerified()) {
+                        return new Response(JSON.stringify({ code: 403, msg: 'Password Required' }), { 
+                            status: 403,
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                    }
+                }
+            } catch(e) { /* 忽略密码检查错误 */ }
+
+            // 2.2 调用本地处理函数 (搜源/详情的核心逻辑)
+            try {
+                // 这里的 handleApiRequest 是定义在 api.js 上半部分的函数
+                // 绝对不能让这个请求走到网络上，因为后端没这个接口
                 const data = await handleApiRequest(requestUrl);
                 
-                // 构造伪造的 Response 返回给前端
+                // 伪造一个成功的 HTTP 响应返回给前端
                 return new Response(data, {
+                    status: 200,
+                    statusText: 'OK',
                     headers: {
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*',
@@ -639,9 +642,10 @@ async function handleMultipleCustomSearch(searchQuery, customApiUrls) {
                 });
             } catch (error) {
                 console.error('API Proxy Error:', error);
+                // 返回 JSON 格式的错误，防止前端解析炸裂
                 return new Response(JSON.stringify({
                     code: 500,
-                    msg: '内部处理错误: ' + error.message,
+                    msg: 'API处理失败: ' + error.message,
                 }), {
                     status: 500,
                     headers: { 'Content-Type': 'application/json' },
@@ -649,7 +653,7 @@ async function handleMultipleCustomSearch(searchQuery, customApiUrls) {
             }
         }
         
-        // 4. 其他普通请求 (图片、CSS、JS文件等) 原样放行
+        // 3. 其他请求 (如图片、CSS、JS) -> 原样放行
         return originalFetch.apply(this, arguments);
     };
 })();
